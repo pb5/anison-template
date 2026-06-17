@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アニソン作曲テンプレ for Logic Pro</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Orbitron:wght@700;900&display=swap');
+
+  :root {
+    --bg: #0a0a14;
+    --surface: #11111f;
+    --card: #16162a;
+    --border: #2a2a4a;
+    --accent: #7c3aed;
+    --accent2: #ec4899;
+    --accent3: #06b6d4;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glow: rgba(124,58,237,0.35);
+    --glow2: rgba(236,72,153,0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: 60px 20px 48px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,58,237,.45) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 20% 120%, rgba(236,72,153,.3) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 120%, rgba(6,182,212,.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: 'Orbitron', sans-serif;
+    font-size: .7rem;
+    letter-spacing: .22em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: .85;
+  }
+  .hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #a78bfa 0%, #ec4899 50%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: .95rem;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .badge {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: .75rem;
+    color: var(--accent3);
+    letter-spacing: .04em;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px 80px;
+  }
+
+  /* ── SECTION TITLE ── */
+  .sec-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: .65rem;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin: 40px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sec-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ── STEP FLOW ── */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .step:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 18px var(--glow);
+  }
+  .step-num {
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent2) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: .95rem;
+    font-weight: 900;
+    color: #fff;
+    writing-mode: horizontal-tb;
+    min-height: 56px;
+  }
+  .step-body {
+    padding: 14px 18px;
+  }
+  .step-label {
+    font-size: .7rem;
+    color: var(--accent3);
+    letter-spacing: .1em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .step-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .step-desc {
+    font-size: .83rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .step-tip {
+    margin-top: 8px;
+    background: rgba(124,58,237,.12);
+    border-left: 2px solid var(--accent);
+    padding: 6px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: .78rem;
+    color: #a78bfa;
+  }
+
+  /* ── CHORD TABLE ── */
+  .chord-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .chord-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .chord-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .chord-card:hover::before { opacity: .12; }
+  .chord-card:hover {
+    border-color: var(--accent2);
+    box-shadow: 0 0 14px var(--glow2);
+    transform: translateY(-2px);
+  }
+  .chord-root {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    position: relative;
+  }
+  .chord-type {
+    font-size: .7rem;
+    color: var(--muted);
+    margin-top: 3px;
+    position: relative;
+  }
+  .chord-role {
+    font-size: .65rem;
+    color: var(--accent2);
+    margin-top: 5px;
+    position: relative;
+  }
+
+  /* ── PROGRESSION BLOCK ── */
+  .prog-list { display: flex; flex-direction: column; gap: 10px; }
+  .prog-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: border-color .2s;
+  }
+  .prog-item:hover { border-color: var(--accent3); }
+  .prog-name {
+    font-size: .7rem;
+    color: var(--accent3);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .prog-chords {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .prog-chord {
+    background: rgba(124,58,237,.2);
+    border: 1px solid rgba(124,58,237,.4);
+    border-radius: 8px;
+    padding: 5px 14px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: .85rem;
+    font-weight: 700;
+    color: #c4b5fd;
+  }
+  .prog-arrow {
+    color: var(--muted);
+    font-size: .9rem;
+  }
+  .prog-scene {
+    font-size: .78rem;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ── STRUCTURE ── */
+  .struct-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .struct-block {
+    flex: 1;
+    min-width: 80px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+    position: relative;
+  }
+  .struct-block.highlight {
+    border-color: var(--accent2);
+    box-shadow: 0 0 12px var(--glow2);
+  }
+  .struct-block.highlight2 {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--glow);
+  }
+  .struct-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: .75rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .struct-bars {
+    font-size: .65rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .struct-note {
+    font-size: .65rem;
+    color: var(--accent3);
+    line-height: 1.5;
+  }
+  .struct-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--muted);
+    font-size: 1rem;
+    padding-top: 24px;
+  }
+
+  /* ── SOUND PALETTE ── */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .palette-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    transition: all .2s;
+  }
+  .palette-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 14px var(--glow);
+  }
+  .palette-cat {
+    font-size: .65rem;
+    color: var(--accent2);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .palette-name {
+    font-weight: 700;
+    font-size: .9rem;
+    margin-bottom: 4px;
+  }
+  .palette-logic {
+    font-size: .72rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── BPM/KEY TABLE ── */
+  .param-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .85rem;
+  }
+  .param-table th {
+    text-align: left;
+    padding: 10px 14px;
+    color: var(--accent3);
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+  .param-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(42,42,74,.5);
+    vertical-align: top;
+  }
+  .param-table tr:last-child td { border-bottom: none; }
+  .param-table td:first-child { color: #e2e8f0; font-weight: 700; width: 120px; }
+  .param-table td:nth-child(2) { color: #a78bfa; }
+  .param-table td:nth-child(3) { color: var(--muted); font-size: .8rem; }
+
+  /* ── CHECKLIST ── */
+  .checklist { display: flex; flex-direction: column; gap: 8px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color .2s;
+    user-select: none;
+  }
+  .check-item:hover { border-color: var(--accent3); }
+  .check-item.done { opacity: .45; }
+  .check-item.done .check-box { background: var(--accent); border-color: var(--accent); }
+  .check-item.done .check-box::after { opacity: 1; }
+  .check-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    position: relative;
+    transition: all .2s;
+  }
+  .check-box::after {
+    content: '✓';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .75rem;
+    color: #fff;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .check-text { font-size: .85rem; line-height: 1.55; }
+  .check-sub { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+  /* ── GLOW PULSE (SIGNATURE) ── */
+  @keyframes pulse-ring {
+    0% { transform: scale(.95); opacity: .6; }
+    70% { transform: scale(1.08); opacity: 0; }
+    100% { transform: scale(.95); opacity: 0; }
+  }
+  .pulse-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+    position: relative;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .pulse-dot::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid var(--accent2);
+    animation: pulse-ring 2s ease-out infinite;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--muted);
+    font-size: .75rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Logic Pro × 作曲テンプレ</p>
+  <h1>アニソン<br>SONGCRAFT</h1>
+  <p>音楽理論ゼロでも大丈夫。<br>このページの順番通りに進めるだけで、アニソンっぽい曲ができあがる。</p>
+  <div class="badge-row">
+    <span class="badge">中高大学生向け</span>
+    <span class="badge">Logic Pro</span>
+    <span class="badge">思考停止OK</span>
+    <span class="badge">アニソン風</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- STEP 1: 基本設定 -->
+  <div class="sec-title">STEP 01 ― まず設定する</div>
+
+  <table class="param-table" style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+    <thead><tr>
+      <th>パラメータ</th>
+      <th>おすすめ値</th>
+      <th>理由</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>BPM</td><td>168〜175</td><td>疾走感あるアニソンの定番。迷ったら172</td></tr>
+      <tr><td>キー</td><td>A minor (Aマイナー)</td><td>ギターもキーボードも弾きやすい。暗くなりすぎない</td></tr>
+      <tr><td>拍子</td><td>4/4</td><td>これ以外にしない</td></tr>
+      <tr><td>マスターピッチ</td><td>440Hz</td><td>デフォルトのまま</td></tr>
+    </tbody>
+  </table>
+
+  <!-- STEP 2: 曲の構成 -->
+  <div class="sec-title">STEP 02 ― 構成を決める</div>
+  <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">この順番で作るだけ。全部で約3分30秒になる。</p>
+
+  <div class="struct-row">
+    <div class="struct-block">
+      <div class="struct-name" style="color:#94a3b8;">INTRO</div>
+      <div class="struct-bars">4小節</div>
+      <div class="struct-note">サビのコードをシンプルに鳴らすだけ</div>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-block">
+      <div class="struct-name" style="color:#94a3b8;">Aメロ</div>
+      <div class="struct-bars">8小節</div>
+      <div class="struct-note">静か目。メロディーを乗せる</div>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-block">
+      <div class="struct-name" style="color:#94a3b8;">Bメロ</div>
+      <div class="struct-bars">8小節</div>
+      <div class="struct-note">少し盛り上げる。転換点</div>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-block highlight2">
+      <div class="struct-name" style="color:#a78bfa;">サビ</div>
+      <div class="struct-bars">16小節</div>
+      <div class="struct-note">一番盛り上がるところ。全部入り</div>
+    </div>
+  </div>
+  <div class="struct-row" style="margin-top:8px;">
+    <div class="struct-block">
+      <div class="struct-name" style="color:#94a3b8;">Aメロ2</div>
+      <div class="struct-bars">8小節</div>
+      <div class="struct-note">歌詞を変えて繰り返す</div>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-block">
+      <div class="struct-name" style="color:#94a3b8;">Bメロ2</div>
+      <div class="struct-bars">8小節</div>
+      <div class="struct-note">同じで良い</div>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-block highlight2">
+      <div class="struct-name" style="color:#a78bfa;">サビ2</div>
+      <div class="struct-bars">16小節</div>
+      <div class="struct-note">コピペでOK</div>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-block highlight">
+      <div class="struct-name" style="color:#f9a8d4;">落ちサビ</div>
+      <div class="struct-bars">8小節</div>
+      <div class="struct-note">ドラムを抜く。感動ポイント</div>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-block highlight">
+      <div class="struct-name" style="color:#f9a8d4;">大サビ</div>
+      <div class="struct-bars">16小節</div>
+      <div class="struct-note">全部入りで最高潮</div>
+    </div>
+  </div>
+
+  <!-- STEP 3: コード進行 -->
+  <div class="sec-title">STEP 03 ― コード進行（コピーして使う）</div>
+
+  <div class="prog-list">
+    <div class="prog-item">
+      <div class="prog-name"><span class="pulse-dot"></span>Aメロ ― 王道マイナー進行</div>
+      <div class="prog-chords">
+        <span class="prog-chord">Am</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">F</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">C</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">G</span>
+      </div>
+      <div class="prog-scene">🎵 これを2回繰り返す = 8小節。落ち着いた物語の始まり</div>
+    </div>
+
+    <div class="prog-item">
+      <div class="prog-name"><span class="pulse-dot"></span>Bメロ ― テンションを上げる</div>
+      <div class="prog-chords">
+        <span class="prog-chord">Dm</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">E</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">Am</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">E</span>
+      </div>
+      <div class="prog-scene">🎵 最後のEがサビへの「助走」。これを2回繰り返す</div>
+    </div>
+
+    <div class="prog-item" style="border-color:rgba(124,58,237,.5);box-shadow:0 0 16px var(--glow);">
+      <div class="prog-name"><span class="pulse-dot"></span>サビ ― アニソン黄金進行</div>
+      <div class="prog-chords">
+        <span class="prog-chord">Am</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">F</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">G</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">C</span>
+      </div>
+      <div class="prog-scene">🎵 これを4回繰り返す = 16小節。「進撃の巨人」「ソードアート」系の感じ</div>
+    </div>
+
+    <div class="prog-item">
+      <div class="prog-name"><span class="pulse-dot"></span>落ちサビ ― 静かに感動</div>
+      <div class="prog-chords">
+        <span class="prog-chord">Am</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">F</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">Am</span><span class="prog-arrow">→</span>
+        <span class="prog-chord">E</span>
+      </div>
+      <div class="prog-scene">🎵 ドラム・ベースをミュートして、ピアノだけにすると泣ける</div>
+    </div>
+  </div>
+
+  <!-- STEP 4: サウンドパレット -->
+  <div class="sec-title">STEP 04 ― Logic Proで使う音源</div>
+  <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">すべてLogic Pro標準搭載。追加購入不要。</p>
+
+  <div class="palette-grid">
+    <div class="palette-card">
+      <div class="palette-cat">🥁 ドラム</div>
+      <div class="palette-name">Drum Machine Designer</div>
+      <div class="palette-logic">プリセット：<br>「Electronic Kit 01」<br>またはDrum Kitの<br>「Pop Rock」</div>
+    </div>
+    <div class="palette-card">
+      <div class="palette-cat">🎸 ベース</div>
+      <div class="palette-name">ES2 / Retro Synth</div>
+      <div class="palette-logic">プリセット：<br>「Analog Bass」<br>コードのルート音だけ弾く</div>
+    </div>
+    <div class="palette-card">
+      <div class="palette-cat">🎹 コード</div>
+      <div class="palette-name">ES2</div>
+      <div class="palette-logic">プリセット：<br>「Lush Pad」<br>上のコード進行を弾く</div>
+    </div>
+    <div class="palette-card">
+      <div class="palette-cat">🎺 リード</div>
+      <div class="palette-name">Retro Synth</div>
+      <div class="palette-logic">プリセット：<br>「Lead Synth」<br>メロディーを弾く</div>
+    </div>
+    <div class="palette-card">
+      <div class="palette-cat">🎻 ストリングス</div>
+      <div class="palette-name">Studio Strings</div>
+      <div class="palette-logic">プリセット：<br>「Ensemble Strings」<br>サビで追加。感動UP</div>
+    </div>
+    <div class="palette-card">
+      <div class="palette-cat">✨ エフェクト</div>
+      <div class="palette-name">Alchemy</div>
+      <div class="palette-logic">プリセット：<br>「Riser」か「Impact」<br>Bメロ→サビの転換に</div>
+    </div>
+  </div>
+
+  <!-- STEP 5: 作り方の手順 -->
+  <div class="sec-title">STEP 05 ― Logic Proでの作業順</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-label">プロジェクト作成</div>
+        <div class="step-title">新規プロジェクトを開いてBPM・キーを設定</div>
+        <div class="step-desc">File → New Project → BPMを172に変更。キーはTranspose設定でAmin。</div>
+        <div class="step-tip">💡 テンポはプロジェクト設定の「テンポ」欄を直接クリックして数字を打ち込む</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-label">ドラムから作る</div>
+        <div class="step-title">Drum Machine Designerで8小節のドラムパターンを作る</div>
+        <div class="step-desc">キック(kick)を1・3拍目に、スネア(snare)を2・4拍目に置く。ハイハット(hihat)は16分音符で刻む。これだけでポップ系ドラムが完成。</div>
+        <div class="step-tip">💡 Drummer トラックを追加→「ポップ」スタイルを選ぶだけでも全然OKよ</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-label">ベースを追加</div>
+        <div class="step-title">コードのルート音だけをベースで弾く</div>
+        <div class="step-desc">Am→F→C→G なら A→F→C→G の音だけを各小節の最初に置く。1音だけでOK。</div>
+        <div class="step-tip">💡 ベースが入るだけで「曲っぽさ」が一気にアップする</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-label">コードを乗せる</div>
+        <div class="step-title">ES2のパッドでコードを弾く</div>
+        <div class="step-desc">STEP 03のコード進行を、各小節ごとにMIDIで打ち込む。和音は3音〜4音。タイミングは小節の頭だけで十分。</div>
+        <div class="step-tip">💡 弾けなくても大丈夫。ピアノロールで音を直接クリックして配置できる</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-label">メロディーを乗せる</div>
+        <div class="step-title">Aマイナースケールの音だけ使ってメロディーを作る</div>
+        <div class="step-desc">使える音：A B C D E F G（これだけ！）。外れた音は鳴らさない。サビは高めの音(E〜A周辺)を使うと盛り上がる。</div>
+        <div class="step-tip">💡 鼻歌を録音してからピアノロールで音を合わせる方法もアリ</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-label">サビを豪華にする</div>
+        <div class="step-title">Studio Stringsを追加してコードをなぞらせる</div>
+        <div class="step-desc">コードトラックをコピーして音源をStudio Stringsに変更するだけ。Velocityを少し下げると馴染む。</div>
+        <div class="step-tip">💡 ストリングスはサビだけ鳴らすのがポイント。Aメロでは使わない</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <div class="step-label">ミックス（簡単版）</div>
+        <div class="step-title">各トラックの音量バランスを整える</div>
+        <div class="step-desc">ドラム：0dB、ベース：−3dB、コード：−6dB、メロディー：−3dB、ストリングス：−8dB。これが基本比率。</div>
+        <div class="step-tip">💡 メロディーが一番よく聞こえることを最優先に調整する</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6: 完成チェックリスト -->
+  <div class="sec-title">STEP 06 ― 完成チェックリスト</div>
+  <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px;">全部チェックできたら完成！タップでチェックできます。</p>
+
+  <div class="checklist" id="checklist">
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">BPMを設定した（おすすめ：172）</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">キーをAマイナーにした</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">イントロ〜大サビの構成で小節を作った</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">ドラムのトラックを作った</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">ベースのトラックを作った（ルート音だけでOK）</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">コード進行を打ち込んだ</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">メロディーを作った（Aマイナースケール内）</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">落ちサビでドラム・ベースをミュートした</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">サビにストリングスを入れた</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">音量バランスを調整した</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">最初から最後まで通して聴いた</div></div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"></div>
+      <div><div class="check-text">書き出し（File → Bounce）して音声ファイルにした</div></div>
+    </div>
+  </div>
+
+  <!-- チートシート -->
+  <div class="sec-title">CHEAT SHEET ― Aマイナースケール音一覧</div>
+  <div class="chord-grid">
+    <div class="chord-card">
+      <div class="chord-root">A</div>
+      <div class="chord-type">ラ</div>
+      <div class="chord-role">ホーム音（安定）</div>
+    </div>
+    <div class="chord-card">
+      <div class="chord-root">B</div>
+      <div class="chord-type">シ</div>
+      <div class="chord-role">経過音</div>
+    </div>
+    <div class="chord-card">
+      <div class="chord-root">C</div>
+      <div class="chord-type">ド</div>
+      <div class="chord-role">明るさを足す</div>
+    </div>
+    <div class="chord-card">
+      <div class="chord-root">D</div>
+      <div class="chord-type">レ</div>
+      <div class="chord-role">切ない感じ</div>
+    </div>
+    <div class="chord-card">
+      <div class="chord-root">E</div>
+      <div class="chord-type">ミ</div>
+      <div class="chord-role">緊張→解決</div>
+    </div>
+    <div class="chord-card">
+      <div class="chord-root">F</div>
+      <div class="chord-type">ファ</div>
+      <div class="chord-role">感情が動く</div>
+    </div>
+    <div class="chord-card">
+      <div class="chord-root">G</div>
+      <div class="chord-type">ソ</div>
+      <div class="chord-role">盛り上がる</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  アニソン作曲テンプレ for Logic Pro ｜ 中高大学生向け ｜ 思考停止でOK<br>
+  <span style="color:rgba(255,255,255,.15);font-size:.65rem;margin-top:4px;display:block;">次のジャンル：EDM / J-POP / LoFi / ロック</span>
+</div>
+
+</body>
+</html>
